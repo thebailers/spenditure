@@ -1,0 +1,34 @@
+.currentuser {
+  background: #eaeaea;
+  overflow: auto;
+  padding: 5px;
+}
+
+.currentuser__wrap {
+  color: #848484;
+  display: inline-block;
+  font-size: 14px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.currentuser__photo {
+  border-radius: 50%;
+  float: left;
+  height: 30px;
+  margin: 5px 10px 0 0;
+  width: 30px;
+}
+
+.currentuser__signout {
+  -webkit-appearance: none;
+  background: #4ac3a2;
+  border: none;
+  border-radius: 3px;
+  color: GhostWhite;
+  font-size: 12px;
+  height: 26px;
+  margin: 0 0 0 30px;
+  padding: 0 12px;
+  vertical-align: middle;
+}

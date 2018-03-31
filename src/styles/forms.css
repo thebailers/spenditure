@@ -1,0 +1,15 @@
+.form-group {
+  margin-bottom: 25px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="number"] {
+  border: 1 px solid #f4f4f4;
+  color: #333;
+  padding: 5px;
+}
