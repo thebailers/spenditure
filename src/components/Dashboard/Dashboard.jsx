@@ -9,6 +9,7 @@ import { fetchOnboardedStatus } from '../Onboarding/action_creators';
 // components
 import Overview from './Overview/Overview';
 import Nav from '../Nav/Nav';
+import Onboarding from '../Onboarding';
 import AddSpend from './AddSpend/AddSpend';
 
 class Dashboard extends Component {
@@ -28,7 +29,7 @@ class Dashboard extends Component {
     }
 
     if (!isLoading && !onboarded) {
-      return <div>Time to onboard them</div>;
+      return <Onboarding />;
     }
 
     return (

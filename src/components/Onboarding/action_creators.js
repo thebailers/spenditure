@@ -23,3 +23,10 @@ export const fetchOnboardedStatus = userId => dispatch =>
       },
     );
   });
+
+export const generateHouseholdID = (household, user) => dispatch =>
+  new Promise((resolve, reject) => {
+    console.log('----');
+    console.log(user);
+    console.log(household);
+  });
