@@ -4,10 +4,8 @@ import { database } from '../../firebase';
 export const FETCH_ONBOARD_STATUS = 'FETCH_ONBOARD_STATUS';
 export const REQUEST_ERROR = 'REQUEST_ERROR';
 
-const fetchHouseholdUsers = (household) => {
-  const ref = database.ref(`spenditure/household/${household}/users`);
-  return ref.once('value', snapshot => snapshot.val());
-};
+const fetchHouseholdUsers = household =>
+  database.ref(`spenditure/household/${household}/users`).once('value', snapshot => snapshot.val());
 
 const requestError = error => ({ type: REQUEST_ERROR, payload: error });
 
@@ -30,17 +28,31 @@ export const fetchOnboardedStatus = userId => dispatch =>
     );
   });
 
-export const generateHouseholdID = (household, user) => dispatch =>
-  new Promise((resolve, reject) => {
-    console.log('----');
-    console.log(fetchHouseholdUsers(user.uid));
-    console.log(user);
-    console.log(household);
+export const generateHouseholdID = (household, user) => (dispatch) => {
+  const { uid } = user;
+  const householdId = uniqid.time();
 
-    // add onboarded stage 1 and stage 2 in resolve if successful (1 true, 2 false)
-    database.ref(`spenditure/households/${uniqid.time()}`).set({
-      users: [...fetchHouseholdUsers(user.uid), ...user.uid],
+  const setHousehold = () =>
+    new Promise((resolve, reject) => {
+      // add onboarded stage 1 and stage 2 in resolve if successful (1 true, 2 false)
+      database.ref(`spenditure/households/${householdId}`).set(
+        {
+          users: [...fetchHouseholdUsers(uid), uid],
+        },
+        () => resolve(),
+      );
     });
 
-    // add household id to the users households array
-  });
+  const setUser = () =>
+    new Promise((resolve, reject) => {
+      // add household id to the users households array
+      database.ref(`spenditure/users/${uid}`).update(
+        {
+          household: householdId,
+        },
+        () => resolve(),
+      );
+    });
+
+  return Promise.all([setHousehold(), setUser()]);
+};

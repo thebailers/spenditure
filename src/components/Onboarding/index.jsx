@@ -30,7 +30,13 @@ class Onboarding extends Component {
   }
 
   generateHouseholdID() {
-    this.props.generateHouseholdID(this.state.new, this.props.user);
+    this.props.generateHouseholdID(this.state.new, this.props.user).then(
+      (success) => {
+        console.log('success - household generated');
+        // need to update the onboarded stages in db
+      },
+      (err) => {},
+    );
   }
 
   render() {
