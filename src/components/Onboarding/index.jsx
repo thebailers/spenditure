@@ -68,6 +68,17 @@ class Onboarding extends Component {
         )}
 
         {household === 'existing' && <div>Existing</div>}
+
+        {/*
+          On press of generate household, on success, add a household ID to the DB, and write this to the page
+          Keep onboarded as false in db - need some way of querying stage 1 or 2
+          Add a stage1 and stage2 onboarded, stage 1 is true, 2 is false
+          This flag when stage 2 is false takes the user back to the next step:
+          Display the household ID to the user and telling them to send to any other household members, and a button to
+          Complete registration
+          This sets stage 2 to true, and does all setup.
+          User will now always be sent to the dashboard
+        */}
       </div>
     );
   }
