@@ -1,6 +1,8 @@
 import uniqid from 'uniqid';
 import { database } from '../../firebase';
 
+import { receiveHousehold } from '../Household/action_creators';
+
 export const FETCH_ONBOARD_STATUS = 'FETCH_ONBOARD_STATUS';
 export const REQUEST_ERROR = 'REQUEST_ERROR';
 
@@ -50,9 +52,20 @@ export const generateHouseholdID = (household, user) => (dispatch) => {
         {
           household: householdId,
         },
-        () => resolve(),
+        () => resolve(dispatch(receiveHousehold(householdId))),
       );
     });
 
   return Promise.all([setHousehold(), setUser()]);
 };
+
+export const addOnboardingStages = userid => dispatch =>
+  new Promise((resolve, reject) => {
+    database.ref(`spenditure/users/${userid}/onboardedStages`).update(
+      {
+        stage1: true,
+        stage2: false,
+      },
+      () => resolve(),
+    );
+  });

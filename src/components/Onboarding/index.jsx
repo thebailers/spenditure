@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 // actions
-import { generateHouseholdID } from './action_creators';
+import { generateHouseholdID, addOnboardingStages } from './action_creators';
 
 import '../../styles/typography.css';
 
@@ -32,8 +32,9 @@ class Onboarding extends Component {
   generateHouseholdID() {
     this.props.generateHouseholdID(this.state.new, this.props.user).then(
       (success) => {
-        console.log('success - household generated');
-        // need to update the onboarded stages in db
+        this.props
+          .addOnboardingStages(this.props.user.uid)
+          .then(success => console.log(success), err => console.log(err));
       },
       (err) => {},
     );
@@ -94,4 +95,4 @@ const mapStateToProps = state => ({
   user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { generateHouseholdID })(Onboarding);
+export default connect(mapStateToProps, { generateHouseholdID, addOnboardingStages })(Onboarding);
