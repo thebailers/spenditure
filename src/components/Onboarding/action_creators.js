@@ -1,7 +1,7 @@
 import uniqid from 'uniqid';
 import { database } from '../../firebase';
 
-import { receiveHousehold } from '../Household/action_creators';
+import { getHouseholdById, receiveHousehold } from '../Household/action_creators';
 
 export const FETCH_ONBOARD_STATUS = 'FETCH_ONBOARD_STATUS';
 export const REQUEST_ERROR = 'REQUEST_ERROR';
@@ -30,13 +30,12 @@ export const fetchOnboardedStatus = userId => dispatch =>
     );
   });
 
-export const generateHouseholdID = (household, user) => (dispatch) => {
+const createHousehold = (household, user) => (dispatch) => {
   const { uid } = user;
   const householdId = uniqid.time();
 
   const setHousehold = () =>
     new Promise((resolve, reject) => {
-      // add onboarded stage 1 and stage 2 in resolve if successful (1 true, 2 false)
       database.ref(`spenditure/households/${householdId}`).set(
         {
           users: [...fetchHouseholdUsers(uid), uid],
@@ -47,7 +46,6 @@ export const generateHouseholdID = (household, user) => (dispatch) => {
 
   const setUser = () =>
     new Promise((resolve, reject) => {
-      // add household id to the users households array
       database.ref(`spenditure/users/${uid}`).update(
         {
           household: householdId,
@@ -58,6 +56,15 @@ export const generateHouseholdID = (household, user) => (dispatch) => {
 
   return Promise.all([setHousehold(), setUser()]);
 };
+
+export const addHousehold = (household, user) => dispatch =>
+  new Promise(async (resolve, reject) => {
+    const hasHousehold = await getHouseholdById(user.uid);
+    if (hasHousehold) {
+      return reject(new Error('You have already generated a household. Please complete the setup steps.'));
+    }
+    return resolve(dispatch(createHousehold(household, user)));
+  });
 
 export const addOnboardingStages = userid => dispatch =>
   new Promise((resolve, reject) => {

@@ -12,6 +12,7 @@ import Dashboard from './Dashboard/Dashboard';
 
 // actions
 import { fetchUser } from './Auth/action_creators';
+import { fetchHouseholdId } from './Household/action_creators';
 import { fetchOnboardedStatus } from './Onboarding/action_creators';
 
 class Root extends Component {
@@ -30,6 +31,9 @@ class Root extends Component {
       // on success we return the user uid fron firebase
       (user) => {
         // success is the user uid
+
+        // fetch household data
+        this.props.fetchHouseholdId(user.uid);
 
         // 1. query db for users/userid
         // 2a. user in db - check onboarded status
@@ -93,6 +97,7 @@ Root.propTypes = {
   onboarded: PropTypes.bool.isRequired,
   fetchUser: PropTypes.func.isRequired,
   fetchOnboardedStatus: PropTypes.func.isRequired,
+  fetchHouseholdId: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -100,4 +105,4 @@ const mapStateToProps = state => ({
   onboarded: state.onboarding.onboarded,
 });
 
-export default connect(mapStateToProps, { fetchUser, fetchOnboardedStatus })(Root);
+export default connect(mapStateToProps, { fetchUser, fetchOnboardedStatus, fetchHouseholdId })(Root);

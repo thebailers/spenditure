@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 // actions
-import { generateHouseholdID, addOnboardingStages } from './action_creators';
+import { addHousehold, addOnboardingStages } from './action_creators';
 
 import '../../styles/typography.css';
+import '../../styles/errors.css';
 
 class Onboarding extends Component {
   constructor(props) {
@@ -13,11 +15,14 @@ class Onboarding extends Component {
       new: {
         numberOfSpenders: 1,
       },
+      errors: {
+        generateHouseholdError: '',
+      },
     };
   }
 
-  defineHousehold(household) {
-    this.setState({ household });
+  defineHousehold(createHousehold) {
+    this.setState({ createHousehold });
   }
 
   handleNewSpendersNumberChange(v) {
@@ -29,52 +34,64 @@ class Onboarding extends Component {
     });
   }
 
-  generateHouseholdID() {
-    this.props.generateHouseholdID(this.state.new, this.props.user).then(
+  addHousehold() {
+    this.props.addHousehold(this.state.new, this.props.user).then(
       (success) => {
-        this.props
-          .addOnboardingStages(this.props.user.uid)
-          .then(success => console.log(success), err => console.log(err));
+        this.props.addOnboardingStages(this.props.user.uid).then((res) => {}, (err) => {});
       },
-      (err) => {},
+      (err) => {
+        this.setState({ errors: { generateHouseholdError: err.message } });
+      },
     );
   }
 
   render() {
-    const { household } = this.state;
+    const { createHousehold, errors: { generateHouseholdError } } = this.state;
+    const { household: { uid } } = this.props;
+
     return (
       <div>
         <h1>Let&apos;s get you set up.</h1>
         <p>
           Are you joining an{' '}
-          <a onClick={() => this.defineHousehold('existing')}>existing household</a>, or setting up
-          a <a onClick={() => this.defineHousehold('new')}>new household</a>?
+          <button onClick={() => this.defineHousehold('existing')}>existing household</button>, or
+          setting up a <button onClick={() => this.defineHousehold('new')}>new household</button>?
         </p>
 
-        {household === 'new' && (
-          <div>
-            <h2>How many spenders in your household?</h2>
-            <p>
-              We will generate a unique household code so that you can share this with other
-              household members. When they sign up, they can enter the code to join your household
-              on spenditure
-            </p>
+        {createHousehold === 'new' &&
+          !uid && (
+            <div>
+              <h2>How many spenders in your household?</h2>
+              <p>
+                We will generate a unique household code so that you can share this with other
+                household members. When they sign up, they can enter the code to join your household
+                on spenditure
+              </p>
+              {generateHouseholdError && (
+                <div className="error">{this.state.errors.generateHouseholdError}</div>
+              )}
+              <input
+                type="number"
+                value={this.state.new.numberOfSpenders}
+                onChange={v => this.handleNewSpendersNumberChange(v)}
+              />
+              <input type="submit" value="Generate household" onClick={() => this.addHousehold()} />
+            </div>
+          )}
 
-            <input
-              type="number"
-              value={this.state.new.numberOfSpenders}
-              onChange={v => this.handleNewSpendersNumberChange(v)}
-            />
+        {createHousehold === 'new' &&
+          uid && (
+            <div>
+              <h2>Your unique household ID is {uid}</h2>
+              <p>
+                Please send this to any other household members so they can quote this when
+                registering to join your household.
+              </p>
+              <button>Complete setup and proceed to your dashboard</button>
+            </div>
+          )}
 
-            <input
-              type="submit"
-              value="Generate household"
-              onClick={() => this.generateHouseholdID()}
-            />
-          </div>
-        )}
-
-        {household === 'existing' && <div>Existing</div>}
+        {createHousehold === 'existing' && <div>Existing</div>}
 
         {/*
           On press of generate household, on success, add a household ID to the DB, and write this to the page
@@ -91,8 +108,14 @@ class Onboarding extends Component {
   }
 }
 
+Onboarding.propTypes = {
+  addHousehold: PropTypes.func.isRequired,
+  addOnboardingStages: PropTypes.func.isRequired,
+};
+
 const mapStateToProps = state => ({
   user: state.auth.user,
+  household: state.household,
 });
 
-export default connect(mapStateToProps, { generateHouseholdID, addOnboardingStages })(Onboarding);
+export default connect(mapStateToProps, { addHousehold, addOnboardingStages })(Onboarding);
