@@ -12,9 +12,6 @@ class Onboarding extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      new: {
-        numberOfSpenders: 1,
-      },
       errors: {
         generateHouseholdError: '',
       },
@@ -23,15 +20,6 @@ class Onboarding extends Component {
 
   defineHousehold(createHousehold) {
     this.setState({ createHousehold });
-  }
-
-  handleNewSpendersNumberChange(v) {
-    this.setState({
-      new: {
-        ...this.state.new,
-        numberOfSpenders: v.target.value,
-      },
-    });
   }
 
   addHousehold() {
@@ -70,11 +58,6 @@ class Onboarding extends Component {
               {generateHouseholdError && (
                 <div className="error">{this.state.errors.generateHouseholdError}</div>
               )}
-              <input
-                type="number"
-                value={this.state.new.numberOfSpenders}
-                onChange={v => this.handleNewSpendersNumberChange(v)}
-              />
               <input type="submit" value="Generate household" onClick={() => this.addHousehold()} />
             </div>
           )}
@@ -108,9 +91,16 @@ class Onboarding extends Component {
   }
 }
 
+Onboarding.defaultProps = {
+  household: {},
+};
+
 Onboarding.propTypes = {
   addHousehold: PropTypes.func.isRequired,
   addOnboardingStages: PropTypes.func.isRequired,
+  household: PropTypes.shape({
+    uid: PropTypes.string,
+  }),
 };
 
 const mapStateToProps = state => ({
