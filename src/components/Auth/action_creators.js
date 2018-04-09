@@ -11,7 +11,7 @@ const requestError = error => ({ type: REQUEST_ERROR, payload: error });
 export const fetchUser = () => dispatch =>
   new Promise((resolve, reject) => {
     app.auth().onAuthStateChanged(
-      (user) => {
+      user => {
         if (user) {
           dispatch(receiveUser(user));
           resolve(user);
@@ -19,7 +19,7 @@ export const fetchUser = () => dispatch =>
           resolve(dispatch(noUser()));
         }
       },
-      (error) => {
+      error => {
         reject(dispatch(requestError(error)));
       },
     );

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { app, googleAuthProvider } from "../../../firebase";
+import { db, googleAuthProvider } from "../../../firebase";
 
 class SignIn extends Component {
   handleClick() {
-    app
+    db
       .auth()
       .signInWithPopup(googleAuthProvider)
       .then(result => {
