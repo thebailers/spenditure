@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import * as _ from "ramda";
 import PropTypes from "prop-types";
 
-import { db } from "../firebase";
+import { app, db } from "../firebase";
 
 // components
 import CurrentUser from "./Auth/CurrentUser/CurrentUser";
@@ -11,7 +11,7 @@ import SignIn from "./Auth/SignIn/SignIn";
 import Dashboard from "./Dashboard/Dashboard";
 
 // actions
-import { fetchUser } from "./Auth/action_creators";
+import { receiveUser, noUser } from "./Auth/action_creators";
 import { fetchHouseholdId } from "./Household/action_creators";
 import { fetchOnboardedStatus } from "./Onboarding/action_creators";
 
@@ -25,68 +25,51 @@ class Root extends Component {
   }
 
   componentDidMount() {
-    // fetch user Firebase, query db & check the user is set up, as we need
-    // to know whether to onboard them, or progress them to the dashboard.
-    this.props.fetchUser().then(
-      // on success we return the user uid from Firebase
+    // Auth watcher
+    app.auth().onAuthStateChanged(
       user => {
-        // success is the user uid
+        if (user) {
+          this.props.receiveUser(user);
 
-        // fetch household data
-        this.props.fetchHouseholdId(user.uid);
+          console.log(user);
+          // success is the user uid
+          if (user.type !== "NO_USER") {
+            // fetch household data
+            this.props.fetchHouseholdId(user.uid);
 
-        // 1. query db for users/userid
-        // 2a. user in db - check onboarded status
-        // 2b. no user in db - update db with user details, return onboarded false flag
+            // 1. query db for users/userid
+            // 2a. user in db - check onboarded status
+            // 2b. no user in db - update db with user details, return onboarded false flag
 
-        // 1.
-        const usersRef = db.collection("users").doc(user.uid);
-        usersRef
-          .get()
-          .then((userId) => {
-            if (userId.exists) {
-              // 2a. need to query the onboarded status
-              this.props.fetchOnboardedStatus(user.uid).then(
-                () => this.setState({ isLoading: false }),
-                err => console.error(err),
-              );
-            } else {
-              // 2b. need to populate the user onboarding flag in the db
-              usersRef.set({
-                fullName: user.displayName,
-                email: user.email,
-                onboarded: false
-              });
-            }
-          })
-          .catch(err => console.error(err));
-        // const userCheck = usersRef.where("uid", "==", user.uid);
-        // console.log(userCheck);
-
-        // database.ref(`spenditure/users/${user.uid}`).once("value", snapshot => {
-        //   const userId = snapshot.val();
-        //   if (userId) {
-        //     // 2a. need to query the onboarded status
-        //     this.props.fetchOnboardedStatus(user.uid).then(
-        //       res => {
-        //         // res is bool onboarded value
-        //         this.setState({ isLoading: false });
-        //       },
-        //       () => {}
-        //     );
-        //   } else {
-        //     // 2b. need to populate the user onboarding flag in the db
-        //     database.ref(`/spenditure/users/${user.uid}`).set({
-        //       fullName: user.displayName,
-        //       email: user.email,
-        //       onboarded: false
-        //     });
-        //   }
-        // });
+            // 1.
+            const usersRef = db.collection("users").doc(user.uid);
+            usersRef
+              .get()
+              .then(userId => {
+                if (userId.exists) {
+                  // 2a. need to query the onboarded status
+                  this.props
+                    .fetchOnboardedStatus(user.uid)
+                    .then(
+                      () => this.setState({ isLoading: false }),
+                      err => console.error(err)
+                    );
+                } else {
+                  // 2b. need to populate the user onboarding flag in the db
+                  usersRef.set({
+                    fullName: user.displayName,
+                    email: user.email,
+                    onboarded: false
+                  });
+                }
+              })
+              .catch(err => console.error(err));
+          }
+        } else {
+          this.props.noUser();
+        }
       },
-      error => {
-        console.log(error);
-      }
+      err => console.error(err)
     );
   }
 
@@ -121,9 +104,10 @@ Root.propTypes = {
     email: PropTypes.string
   }),
   onboarded: PropTypes.bool.isRequired,
-  fetchUser: PropTypes.func.isRequired,
   fetchOnboardedStatus: PropTypes.func.isRequired,
-  fetchHouseholdId: PropTypes.func.isRequired
+  fetchHouseholdId: PropTypes.func.isRequired,
+  receiveUser: PropTypes.func.isRequired,
+  noUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -132,7 +116,8 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, {
-  fetchUser,
   fetchOnboardedStatus,
-  fetchHouseholdId
+  fetchHouseholdId,
+  receiveUser,
+  noUser
 })(Root);

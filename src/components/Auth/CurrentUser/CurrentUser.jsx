@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { db } from "../../../firebase";
+import { app } from "../../../firebase";
 import "./CurrentUser.css";
 
 const CurrentUser = ({ user }) => {
@@ -20,7 +20,7 @@ const CurrentUser = ({ user }) => {
 
         <button
           className="currentuser__signout"
-          onClick={() => db.auth().signOut()}
+          onClick={() => app.auth().signOut()}
         >
           Sign Out
         </button>
