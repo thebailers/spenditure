@@ -48,12 +48,8 @@ class Onboarding extends Component {
 
   joinHousehold() {
     this.props.joinHousehold(this.state.householdUid, this.props.user.uid).then(
-      res => {
-        console.log("success");
-      },
-      err => {
-        console.log("error");
-      }
+      res => console.log(res),
+      err => console.error(err),
     );
   }
 
@@ -147,7 +143,7 @@ Onboarding.propTypes = {
 
 const mapStateToProps = state => ({
   user: state.auth.user,
-  household: state.household
+  household: state.household,
 });
 
 export default connect(mapStateToProps, {

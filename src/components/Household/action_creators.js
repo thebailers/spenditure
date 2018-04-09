@@ -13,7 +13,7 @@ export const getUsersHouseholdByUserId = id =>
     .collection('users')
     .doc(id)
     .get()
-    .then(doc => doc.data());
+    .then(res => res.get('household'));
 
 export const receiveHousehold = householdId => ({
   type: RECEIVE_HOUSEHOLD,
@@ -23,6 +23,9 @@ export const receiveHousehold = householdId => ({
 export const fetchHouseholdId = uid => dispatch => {
   const getHousehold = async () => {
     const householdId = await getUsersHouseholdByUserId(uid);
+    console.log('------');
+    console.log(householdId);
+    console.log('------');
     if (householdId) dispatch(receiveHousehold(householdId));
   };
   getHousehold();

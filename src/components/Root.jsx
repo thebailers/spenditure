@@ -47,16 +47,8 @@ class Root extends Component {
             if (userId.exists) {
               // 2a. need to query the onboarded status
               this.props.fetchOnboardedStatus(user.uid).then(
-                res => {
-
-                  // res is bool onboarded value
-                  this.setState({ isLoading: false });
-                },
-                (err) => {
-                  console.log('------')
-                  console.log(err)
-                  console.log('------')
-                }
+                () => this.setState({ isLoading: false }),
+                err => console.error(err),
               );
             } else {
               // 2b. need to populate the user onboarding flag in the db
