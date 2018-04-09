@@ -77,11 +77,19 @@ export const addHousehold = user => dispatch =>
 
 export const joinHousehold = (household, userId) => dispatch =>
   new Promise(async (resolve, reject) => {
+    console.log(`household: ${household}`);
+    console.log(`userId: ${userId}`);
+
     const hasHousehold = await getHouseholdById(household);
+    console.log(hasHousehold);
+
+    // Reject if no household id is supplied
+    if (!household) reject(new Error('Please supply a household code'));
+
     if (hasHousehold) {
       // implement promise all, to dispatch save user to households and save household to user/household
-      saveUserToHousehold(household, userId);
-      resolve();
+      //saveUserToHousehold(household, userId);
+      //resolve();
     }
     return reject(
       new Error(

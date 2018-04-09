@@ -18,7 +18,8 @@ class Onboarding extends Component {
     this.state = {
       householdUid: "",
       errors: {
-        generateHouseholdError: ""
+        generateHouseholdError: "",
+        joinHouseholdError: "",
       }
     };
   }
@@ -35,26 +36,24 @@ class Onboarding extends Component {
 
   addHousehold() {
     this.props.addHousehold(this.props.user).then(
-      success => {
+      () => {
         this.props
           .addOnboardingStages(this.props.user.uid)
           .then(res => {}, err => {});
       },
-      err => {
-        this.setState({ errors: { generateHouseholdError: err.message } });
-      }
+      err => this.setState({ errors: { generateHouseholdError: err.message } }),
     );
   }
 
   joinHousehold() {
     this.props.joinHousehold(this.state.householdUid, this.props.user.uid).then(
       res => console.log(res),
-      err => console.error(err),
+      err => this.setState({ errors: { joinHouseholdError: err.message } }),
     );
   }
 
   render() {
-    const { createHousehold, errors: { generateHouseholdError } } = this.state;
+    const { createHousehold, errors: { generateHouseholdError, joinHouseholdError } } = this.state;
     const { household: { uid } } = this.props;
 
     return (
@@ -114,6 +113,11 @@ class Onboarding extends Component {
               To join an existing household, enter the household code below.
             </p>
 
+            {joinHouseholdError && (
+              <div className="error">
+                {this.state.errors.joinHouseholdError}
+              </div>
+            )}
             <input
               type="text"
               value={this.state.householdUid}

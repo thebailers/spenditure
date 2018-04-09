@@ -2,11 +2,10 @@ import { db } from '../../firebase';
 
 export const RECEIVE_HOUSEHOLD = 'RECEIVE_HOUSEHOLD';
 
-export const getHouseholdById = id =>
-  db
-    .ref(`spenditure/households`)
-    .once('value')
-    .then(res => res.child(id).val());
+export const getHouseholdById = id => {
+  if (!id) return null;
+  return db.collection('households').doc(id);
+};
 
 export const getUsersHouseholdByUserId = id =>
   db
