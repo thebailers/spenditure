@@ -34,22 +34,29 @@ const createHousehold = user => dispatch => {
 
   const setHousehold = () =>
     new Promise((resolve, reject) => {
-      db.ref(`spenditure/households/${householdId}`).set(
-        {
-          users: uid,
-        },
-        () => resolve(),
-      );
+      db
+        .collection('households')
+        .doc(householdId)
+        .set(
+          {
+            users: uid,
+          },
+          () => resolve(),
+        );
     });
 
   const setUser = () =>
     new Promise((resolve, reject) => {
-      db.ref(`spenditure/users/${uid}`).update(
-        {
+      db
+        .collection('users')
+        .doc(uid)
+        .update({
           household: householdId,
-        },
-        () => resolve(dispatch(receiveHousehold(householdId))),
-      );
+        })
+        .then(
+          () => resolve(dispatch(receiveHousehold(householdId))),
+          err => console.error(err),
+        );
     });
 
   return Promise.all([setHousehold(), setUser()]);

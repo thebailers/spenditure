@@ -23,9 +23,6 @@ export const receiveHousehold = householdId => ({
 export const fetchHouseholdId = uid => dispatch => {
   const getHousehold = async () => {
     const householdId = await getUsersHouseholdByUserId(uid);
-    console.log('------');
-    console.log(householdId);
-    console.log('------');
     if (householdId) dispatch(receiveHousehold(householdId));
   };
   getHousehold();
