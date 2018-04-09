@@ -19,16 +19,13 @@ const receiveOnboardedStatus = onboarded => ({
 
 export const fetchOnboardedStatus = userId => dispatch =>
   new Promise((resolve, reject) => {
-    const ref = db.ref(`spenditure/users/${userId}`);
-    ref.once('value').then(
-      res => {
-        const onboarded = res.child('onboarded').val();
-        resolve(dispatch(receiveOnboardedStatus(onboarded)));
-      },
-      err => {
-        reject(dispatch(requestError(err)));
-      },
-    );
+    const ref = db.collection('users').doc(userId);
+    ref
+      .get()
+      .then(
+        res => resolve(dispatch(receiveOnboardedStatus(res.get('onboarded')))),
+        err => reject(dispatch(requestError(err))),
+      );
   });
 
 const createHousehold = user => dispatch => {
