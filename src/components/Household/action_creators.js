@@ -19,10 +19,8 @@ export const receiveHousehold = householdId => ({
   payload: householdId,
 });
 
-export const fetchHouseholdId = uid => dispatch => {
-  const getHousehold = async () => {
-    const householdId = await getUsersHouseholdByUserId(uid);
-    if (householdId) dispatch(receiveHousehold(householdId));
-  };
-  getHousehold();
+export const fetchHouseholdId = uid => async dispatch => {
+  const householdId = await getUsersHouseholdByUserId(uid);
+  if (householdId) dispatch(receiveHousehold(householdId));
+  else dispatch(receiveHousehold(null));
 };

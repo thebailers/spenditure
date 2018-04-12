@@ -18,15 +18,14 @@ const receiveOnboardedStatus = onboarded => ({
 });
 
 export const fetchOnboardedStatus = userId => dispatch =>
-  new Promise((resolve, reject) => {
-    const ref = db.collection('users').doc(userId);
-    ref
-      .get()
-      .then(
-        res => resolve(dispatch(receiveOnboardedStatus(res.get('onboarded')))),
-        err => reject(dispatch(requestError(err))),
-      );
-  });
+  db
+    .collection('users')
+    .doc(userId)
+    .get()
+    .then(
+      res => dispatch(receiveOnboardedStatus(res.get('onboarded'))),
+      err => dispatch(requestError(err)),
+    );
 
 const createHousehold = user => dispatch => {
   const { uid } = user;
@@ -39,10 +38,14 @@ const createHousehold = user => dispatch => {
         .doc(householdId)
         .set(
           {
-            users: uid,
+            users: [uid],
           },
-          () => resolve(),
-        );
+          { merge: true },
+        )
+        .then(() => {
+          resolve();
+        })
+        .catch(() => reject());
     });
 
   const setUser = () =>
@@ -80,16 +83,17 @@ export const joinHousehold = (household, userId) => dispatch =>
     console.log(`household: ${household}`);
     console.log(`userId: ${userId}`);
 
-    const hasHousehold = await getHouseholdById(household);
-    console.log(hasHousehold);
+    const householdExists = await getHouseholdById(household);
+    console.log(householdExists);
 
     // Reject if no household id is supplied
     if (!household) reject(new Error('Please supply a household code'));
 
-    if (hasHousehold) {
+    if (householdExists) {
       // implement promise all, to dispatch save user to households and save household to user/household
       //saveUserToHousehold(household, userId);
       //resolve();
+      console.log('household does exist');
     }
     return reject(
       new Error(

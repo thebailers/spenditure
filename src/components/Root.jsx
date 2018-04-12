@@ -31,12 +31,10 @@ class Root extends Component {
         if (user) {
           this.props.receiveUser(user);
 
-          console.log(user);
-          // success is the user uid
           if (user.type !== "NO_USER") {
             // fetch household data
-            this.props.fetchHouseholdId(user.uid);
 
+            this.props.fetchHouseholdId(user.uid);
             // 1. query db for users/userid
             // 2a. user in db - check onboarded status
             // 2b. no user in db - update db with user details, return onboarded false flag
@@ -45,21 +43,21 @@ class Root extends Component {
             const usersRef = db.collection("users").doc(user.uid);
             usersRef
               .get()
-              .then(userId => {
+              .then((userId) => {
                 if (userId.exists) {
                   // 2a. need to query the onboarded status
                   this.props
                     .fetchOnboardedStatus(user.uid)
                     .then(
                       () => this.setState({ isLoading: false }),
-                      err => console.error(err)
+                      err => console.error(err),
                     );
                 } else {
                   // 2b. need to populate the user onboarding flag in the db
                   usersRef.set({
                     fullName: user.displayName,
                     email: user.email,
-                    onboarded: false
+                    onboarded: false,
                   });
                 }
               })
@@ -69,7 +67,7 @@ class Root extends Component {
           this.props.noUser();
         }
       },
-      err => console.error(err)
+      err => console.error(err),
     );
   }
 
@@ -93,7 +91,7 @@ class Root extends Component {
 }
 
 Root.defaultProps = {
-  user: {}
+  user: {},
 };
 
 Root.propTypes = {
