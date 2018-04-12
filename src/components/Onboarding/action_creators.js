@@ -27,42 +27,45 @@ export const fetchOnboardedStatus = userId => dispatch =>
       err => dispatch(requestError(err)),
     );
 
-const createHousehold = user => dispatch => {
+const setHousehold = (uid, householdId) => dispatch =>
+  new Promise((resolve, reject) => {
+    db
+      .collection('households')
+      .doc(householdId)
+      .set(
+        {
+          users: [uid],
+        },
+        { merge: true },
+      )
+      .then(() => {
+        resolve();
+      })
+      .catch(() => reject());
+  });
+
+const setUser = (uid, householdId) => dispatch =>
+  new Promise((resolve, reject) => {
+    db
+      .collection('users')
+      .doc(uid)
+      .update({
+        household: householdId,
+      })
+      .then(
+        () => resolve(dispatch(receiveHousehold(householdId))),
+        err => console.error(err),
+      );
+  });
+
+const createHousehold = user => {
   const { uid } = user;
   const householdId = uniqid.time();
 
-  const setHousehold = () =>
-    new Promise((resolve, reject) => {
-      db
-        .collection('households')
-        .doc(householdId)
-        .set(
-          {
-            users: [uid],
-          },
-          { merge: true },
-        )
-        .then(() => {
-          resolve();
-        })
-        .catch(() => reject());
-    });
-
-  const setUser = () =>
-    new Promise((resolve, reject) => {
-      db
-        .collection('users')
-        .doc(uid)
-        .update({
-          household: householdId,
-        })
-        .then(
-          () => resolve(dispatch(receiveHousehold(householdId))),
-          err => console.error(err),
-        );
-    });
-
-  return Promise.all([setHousehold(), setUser()]);
+  return Promise.all([
+    setHousehold(uid, householdId),
+    setUser(uid, householdId),
+  ]);
 };
 
 export const addHousehold = user => dispatch =>
@@ -93,6 +96,10 @@ export const joinHousehold = (household, userId) => dispatch =>
       // implement promise all, to dispatch save user to households and save household to user/household
       //saveUserToHousehold(household, userId);
       //resolve();
+
+      // save user to households array
+
+      // save household id to user id
       console.log('household does exist');
     }
     return reject(
