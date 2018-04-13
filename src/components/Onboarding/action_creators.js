@@ -27,7 +27,7 @@ export const fetchOnboardedStatus = userId => dispatch =>
       err => dispatch(requestError(err)),
     );
 
-const setHousehold = (uid, householdId) => dispatch =>
+const setHousehold = (uid, householdId) =>
   new Promise((resolve, reject) => {
     db
       .collection('households')
@@ -58,13 +58,13 @@ const setUser = (uid, householdId) => dispatch =>
       );
   });
 
-const createHousehold = user => {
+const createHousehold = user => dispatch => {
   const { uid } = user;
   const householdId = uniqid.time();
 
   return Promise.all([
     setHousehold(uid, householdId),
-    setUser(uid, householdId),
+    setUser(uid, householdId)(dispatch),
   ]);
 };
 
