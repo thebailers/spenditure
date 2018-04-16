@@ -31,13 +31,8 @@ const setHousehold = (uid, householdId) =>
   new Promise((resolve, reject) => {
     db
       .collection('households')
-      .doc(householdId)
-      .set(
-        {
-          users: [uid],
-        },
-        { merge: true },
-      )
+      .doc(`${householdId}/users`)
+      .set(uid, { merge: true })
       .then(() => {
         resolve();
       })
@@ -96,11 +91,10 @@ export const joinHousehold = (household, userId) => dispatch =>
       // implement promise all, to dispatch save user to households and save household to user/household
       //saveUserToHousehold(household, userId);
       //resolve();
-
-      // save user to households array
-
-      // save household id to user id
-      console.log('household does exist');
+      return Promise.all([
+        setHousehold(userId, household),
+        setUser(userId, household)(dispatch),
+      ]);
     }
     return reject(
       new Error(

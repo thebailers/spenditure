@@ -3,6 +3,9 @@
 #config
 /src/firebase.js
 
+#api
+/server
+
 # dependencies
 /node_modules
 
