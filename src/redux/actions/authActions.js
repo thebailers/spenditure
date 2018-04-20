@@ -11,19 +11,17 @@ export const setCurrentUser = user => ({
 });
 
 export const register = userdata =>
-  axios.post('http://localhost:3030/api/users', userdata).then((res) => {
+  axios.post('api/users', userdata).then((res) => {
     console.log(res);
   });
 
-export const login = data => (dispatch) => {
-  console.log(data);
-  axios.post('http://localhost:3030/auth/signin', data).then((res) => {
+export const login = data => dispatch =>
+  axios.post('auth/signin', data).then((res) => {
     const { token } = res.data;
     localStorage.setItem('mm-jwtToken', token);
     setAuthToken(token);
     dispatch(setCurrentUser(jwtDecode(token)));
   });
-};
 
 export const logout = () => (dispatch) => {
   localStorage.removeItem('mm-jwtToken');
@@ -32,4 +30,4 @@ export const logout = () => (dispatch) => {
 };
 
 export const checkAuth = () => dispatch =>
-  axios.get('http://localhost:3030/auth/check-auth').catch(err => dispatch(handleErr(err)));
+  axios.get('auth/check-auth').catch(err => dispatch(handleErr(err)));
