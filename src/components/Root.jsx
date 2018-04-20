@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import * as _ from "ramda";
 import PropTypes from "prop-types";
 
-import { app, db } from "../firebase";
-
 // components
-import CurrentUser from "./Auth/CurrentUser/CurrentUser";
 import SignIn from "./Auth/SignIn/SignIn";
 import Dashboard from "./Dashboard/Dashboard";
 
@@ -14,6 +12,8 @@ import Dashboard from "./Dashboard/Dashboard";
 import { receiveUser, noUser } from "./Auth/action_creators";
 import { fetchHouseholdId } from "./Household/action_creators";
 import { fetchOnboardedStatus } from "./Onboarding/action_creators";
+import AddSpend from "./Dashboard/AddSpend/AddSpend";
+import Overview from "./Dashboard/Overview/Overview";
 
 class Root extends Component {
   constructor(props) {
@@ -26,72 +26,38 @@ class Root extends Component {
 
   componentDidMount() {
     // Auth watcher
-    app.auth().onAuthStateChanged(
-      user => {
-        if (user) {
-          this.props.receiveUser(user);
 
-          if (user.type !== "NO_USER") {
-            // fetch household data
-
-            this.props.fetchHouseholdId(user.uid);
-            // 1. query db for users/userid
-            // 2a. user in db - check onboarded status
-            // 2b. no user in db - update db with user details, return onboarded false flag
-
-            // 1.
-            const usersRef = db.collection("users").doc(user.uid);
-            usersRef
-              .get()
-              .then((userId) => {
-                if (userId.exists) {
-                  // 2a. need to query the onboarded status
-                  this.props
-                    .fetchOnboardedStatus(user.uid)
-                    .then(
-                      () => this.setState({ isLoading: false }),
-                      err => console.error(err),
-                    );
-                } else {
-                  // 2b. need to populate the user onboarding flag in the db
-                  usersRef.set({
-                    fullName: user.displayName,
-                    email: user.email,
-                    onboarded: false,
-                  });
-                }
-              })
-              .catch(err => console.error(err));
-          }
-        } else {
-          this.props.noUser();
-        }
-      },
-      err => console.error(err),
-    );
   }
 
   render() {
     const { user } = this.props;
 
-    return (
-      <div>
-        <div className="App-header">
-          {!_.isEmpty(user) && <CurrentUser user={user} />}
-          {_.isEmpty(user) && <SignIn />}
+    if (_.isEmpty(user)) {
+      return <SignIn />;
+    }
 
-          <Dashboard
-            isLoading={this.state.isLoading}
-            onboarded={this.props.onboarded}
+    return (
+      <Router>
+        <div className="route-wrapper">
+          <Route path="/dashboard" component={Dashboard} />
+          <Route
+            path="/dashboard"
+            render={routeProps => (
+              <Dashboard
+                {...routeProps}
+                isLoading={this.state.isLoading}
+                onboarded={this.props.onboarded}
+              />
+            )}
           />
         </div>
-      </div>
+      </Router>
     );
   }
 }
 
 Root.defaultProps = {
-  user: {},
+  user: {}
 };
 
 Root.propTypes = {
