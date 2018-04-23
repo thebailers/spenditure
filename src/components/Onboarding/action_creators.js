@@ -29,19 +29,34 @@ export const fetchOnboardedStatus = userId => dispatch =>
 
 const setHousehold = (uid, householdId) =>
   new Promise((resolve, reject) => {
-    db
-      .collection("households")
-      .doc(householdId)
-      .set(
-        {
-          users: [uid]
-        },
-        { merge: true }
-      )
-      .then(() => {
-        resolve();
-      })
-      .catch(() => reject());
+    // db
+    //   .collection("households")
+    //   .doc(householdId)
+    //   .set(
+    //     {
+    //       users: [uid]
+    //     },
+    //     { merge: true }
+    //   )
+    //   .then(() => {
+    //     resolve();
+    //   })
+    //   .catch(() => reject());
+
+    const householdRef = db.collection('households').doc(householdId);
+
+    const newUid = '1234'; // whatever the uid is...
+
+    return db.runTransaction((t) => {
+      return t.get(householdRef).then((doc) => {
+        // doc doesn't exist; can't update
+        if (!doc.exists) return reject();
+        // update the users array after getting it from Firestore.
+        const newUserArray = doc.get('users').push(newUid);
+        resolve(t.set(householdRef, { users: newUserArray }, { merge: true }));
+      });
+    }).catch(console.log);
+
   });
 
 const setUser = (uid, householdId) => dispatch =>
@@ -93,19 +108,23 @@ export const joinHousehold = (household, userId) => dispatch =>
     if (!household) reject(new Error("Please supply a household code"));
 
     if (householdExists) {
+      console.log('household exists')
       // implement promise all, to dispatch save user to households and save household to user/household
       //saveUserToHousehold(household, userId);
       //resolve();
+
       return Promise.all([
         setHousehold(userId, household),
         setUser(userId, household)(dispatch)
       ]);
+    } else {
+      return reject(
+          new Error(
+              "Sorry, no household exists with this id, or you do not have access to this household."
+          )
+      );
     }
-    return reject(
-      new Error(
-        "Sorry, no household exists with this id, or you do not have access to this household."
-      )
-    );
+
   });
 
 const saveUserToHousehold = (household, userId) =>

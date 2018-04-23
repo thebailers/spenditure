@@ -42,7 +42,6 @@ class SignIn extends Component {
             type: 'success',
             text: 'Welcome back!',
           });
-          this.context.router.history.push('/dashboard');
         },
         err => this.setState({ errors: err.data.errors, isLoading: false }),
       );

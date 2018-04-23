@@ -16,7 +16,7 @@ const CurrentUser = ({ user }) => {
           alt={user.displayName}
         />
 
-        {user.displayName}
+        {user.displayName}, {user.email}, {user.uid}
 
         <button
           className="currentuser__signout"

@@ -1,13 +1,13 @@
+import shortid from 'shortid';
+import findIndex from 'lodash/findIndex';
 import {
   ADD_FLASH_MESSAGE,
-  DELETE_FLASH_MESSAGE
-} from "../actions/flashMessages";
-import shortid from "shortid";
-import findIndex from "lodash/findIndex";
+  DELETE_FLASH_MESSAGE,
+} from '../actions/flashMessages';
 
 const INITIAL_STATE = [];
 
-export default function(state = INITIAL_STATE, action = {}) {
+export const flashMessages = (state = INITIAL_STATE, action = {}) => {
   switch (action.type) {
     case ADD_FLASH_MESSAGE:
       return [
@@ -15,8 +15,8 @@ export default function(state = INITIAL_STATE, action = {}) {
         {
           id: shortid.generate(),
           type: action.message.type,
-          text: action.message.text
-        }
+          text: action.message.text,
+        },
       ];
 
     case DELETE_FLASH_MESSAGE:

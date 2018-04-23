@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import * as _ from 'ramda';
 import PropTypes from 'prop-types';
 
@@ -31,23 +31,15 @@ class Root extends Component {
   render() {
     const { user } = this.props;
 
-    // if (_.isEmpty(user)) {
-    //   return <SignIn />;
-    // }
-
     return (
       <Router>
         <div className="route-wrapper">
-          <Route exact path="/" component={SignIn} />
-          <Route
-            path="/dashboard"
-            render={routeProps => (
-              <Dashboard
-                {...routeProps}
-                isLoading={this.state.isLoading}
-                onboarded={this.props.onboarded}
-              />
-            )}
+          <Route exact path="/" render={() => (
+            _.isEmpty(user) ? (
+              <SignIn />
+            ) : (
+              <Redirect to="/dashboard" />
+            ))}
           />
         </div>
       </Router>
