@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { app } from "../../../firebase";
 import "./CurrentUser.css";
 
 const CurrentUser = ({ user }) => {
@@ -20,7 +19,6 @@ const CurrentUser = ({ user }) => {
 
         <button
           className="currentuser__signout"
-          onClick={() => app.auth().signOut()}
         >
           Sign Out
         </button>

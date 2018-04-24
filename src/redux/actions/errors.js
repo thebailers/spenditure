@@ -1,5 +1,5 @@
 import setAuthToken from '../../utilities/setAuthToken';
-import { setCurrentUser } from '../../redux/actions/authActions';
+import { setCurrentUser } from '../../components/Auth/action_creators';
 
 const handleErr = (err) => {
   if (err.status === 401 || err.status === 404) {

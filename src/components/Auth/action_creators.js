@@ -1,33 +1,33 @@
-// import { app } from '../../firebase';
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
+import setAuthToken from '../../utilities/setAuthToken';
+import handleErr from '../../redux/actions/errors';
 
-export const RECEIVE_USER = 'RECEIVE_USER';
-export const NO_USER = 'NO_USER';
-export const SIGN_OUT = 'SIGN_OUT';
-export const SIGN_IN = 'SIGN_IN';
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
-export const receiveUser = user => ({ type: RECEIVE_USER, payload: user });
-export const noUser = () => ({ type: NO_USER });
-
-export const signIn = user => ({
-  type: SIGN_IN,
-  payload: user,
+export const setCurrentUser = user => ({
+  type: SET_CURRENT_USER,
+  user,
 });
 
-export const signOut = () => ({ type: SIGN_OUT });
+export const register = userdata =>
+  axios.post('api/users', userdata).then((res) => {
+    console.log(res);
+  });
 
-// export const fetchUser = () => dispatch =>
-//   new Promise((resolve, reject) => {
-//     app.auth().onAuthStateChanged(
-//       user => {
-//         if (user) {
-//           dispatch(receiveUser(user));
-//           resolve(user);
-//         } else {
-//           resolve(dispatch(noUser()));
-//         }
-//       },
-//       error => {
-//         reject(dispatch(requestError(error)));
-//       },
-//     );
-//   });
+export const login = data => dispatch =>
+  axios.post('auth/signin', data).then((res) => {
+    const { token } = res.data;
+    localStorage.setItem('mm-jwtToken', token);
+    setAuthToken(token);
+    dispatch(setCurrentUser(jwtDecode(token)));
+  });
+
+export const logout = () => (dispatch) => {
+  localStorage.removeItem('mm-jwtToken');
+  setAuthToken(false);
+  dispatch(setCurrentUser({}));
+};
+
+export const checkAuth = () => dispatch =>
+  axios.get('auth/check-auth').catch(err => dispatch(handleErr(err)));

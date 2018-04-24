@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 // reducers
-import auth from '../redux/reducers/auth';
+import auth from '../components/Auth/reducer';
 import addSpend from '../components/Dashboard/AddSpend/reducer';
 import onboarding from '../components/Onboarding/reducer';
 import household from '../components/Household/reducer';

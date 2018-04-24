@@ -9,7 +9,6 @@ import SignIn from './Auth/SignIn/SignIn';
 import Dashboard from './Dashboard/Dashboard';
 
 // actions
-import { receiveUser, noUser } from './Auth/action_creators';
 import { fetchHouseholdId } from './Household/action_creators';
 import { fetchOnboardedStatus } from './Onboarding/action_creators';
 import AddSpend from './Dashboard/AddSpend/AddSpend';
@@ -61,8 +60,6 @@ Root.propTypes = {
   onboarded: PropTypes.bool.isRequired,
   fetchOnboardedStatus: PropTypes.func.isRequired,
   fetchHouseholdId: PropTypes.func.isRequired,
-  receiveUser: PropTypes.func.isRequired,
-  noUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -73,6 +70,4 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, {
   fetchOnboardedStatus,
   fetchHouseholdId,
-  receiveUser,
-  noUser,
 })(Root);

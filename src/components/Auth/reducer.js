@@ -1,4 +1,4 @@
-import {RECEIVE_USER, SET_CURRENT_USER} from './action_creators';
+import { SET_CURRENT_USER } from './action_creators';
 
 const INITIAL_STATE = {
   user: {},
@@ -6,12 +6,10 @@ const INITIAL_STATE = {
 
 const auth = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case RECEIVE_USER:
+    case SET_CURRENT_USER:
       return {
         ...state,
-        user: {
-          jwt: action.payload.jwt,
-        },
+        user: action.user,
       };
     default:
       return state;

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import TextFieldGroup from '../../Utility/Form/TextFieldGroup';
 
 // actions
-import { login } from '../../../redux/actions/authActions';
+import { login } from '../../../components/Auth/action_creators';
 import { addFlashMessage } from '../../../redux/actions/flashMessages';
 
 // utilities
