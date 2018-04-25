@@ -40,20 +40,35 @@ class Root extends Component {
               <Redirect to="/dashboard" />
             ))}
           />
-          <Route path="/dashboard" user={user} component={Dashboard} />
+          <Route path="/dashboard" user={user} render={() => (
+              _.isEmpty(user) ? (
+                  <Redirect to="/" />
+              ) : (
+                  <Dashboard />
+              ))}
+          />
         </div>
       </Router>
     );
   }
 }
 
+Root.defaultProps = {
+  user: {},
+};
+
 Root.propTypes = {
+  user: PropTypes.shape({
+    firstname: PropTypes.string,
+    lastname: PropTypes.string,
+  }),
   onboarded: PropTypes.bool.isRequired,
   fetchOnboardedStatus: PropTypes.func.isRequired,
   fetchHouseholdId: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
+  user: state.auth.user,
   onboarded: state.onboarding.onboarded,
 });
 
