@@ -40,30 +40,20 @@ class Root extends Component {
               <Redirect to="/dashboard" />
             ))}
           />
+          <Route path="/dashboard" user={user} component={Dashboard} />
         </div>
       </Router>
     );
   }
 }
 
-Root.defaultProps = {
-  user: {},
-};
-
 Root.propTypes = {
-  user: PropTypes.shape({
-    uid: PropTypes.string,
-    displayName: PropTypes.string,
-    photoURL: PropTypes.string,
-    email: PropTypes.string,
-  }),
   onboarded: PropTypes.bool.isRequired,
   fetchOnboardedStatus: PropTypes.func.isRequired,
   fetchHouseholdId: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  user: state.auth.user,
   onboarded: state.onboarding.onboarded,
 });
 

@@ -12,14 +12,17 @@ import {
 import "../../styles/typography.css";
 import "../../styles/errors.css";
 
+// styles
+import "./onboarding.css";
+
 class Onboarding extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      householdUid: "",
+      householdUid: '',
       errors: {
-        generateHouseholdError: "",
-        joinHouseholdError: "",
+        generateHouseholdError: '',
+        joinHouseholdError: '',
       }
     };
   }
@@ -57,7 +60,7 @@ class Onboarding extends Component {
     const { household: { uid } } = this.props;
 
     return (
-      <div>
+      <div className="onboarding">
         <h1>Let&apos;s get you set up.</h1>
         <p>
           Are you joining an{" "}

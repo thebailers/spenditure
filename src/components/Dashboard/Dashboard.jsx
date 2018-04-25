@@ -12,6 +12,10 @@ import Nav from '../Nav/Nav';
 import Onboarding from '../Onboarding';
 import AddSpend from './AddSpend/AddSpend';
 
+// styles
+import "./dashboard.css";
+import CurrentUser from "../Auth/CurrentUser/CurrentUser";
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -28,18 +32,26 @@ class Dashboard extends Component {
       return <div>Loading</div>;
     }
 
-    if (!isLoading && !onboarded) {
-      return <Onboarding />;
-    }
-
     return (
-      <Router>
-        <div className="route-wrapper">
-          <Nav page={this.state.currentPage} />
-          <Route exact path="/" component={Overview} />
-          <Route path="/add-spend" component={AddSpend} />
-        </div>
-      </Router>
+      <div className="dashboard">
+        <h1>Dashboard</h1>
+        <CurrentUser />
+
+        {(!isLoading && !onboarded) &&
+          <Onboarding />
+        }
+
+        {(!isLoading && onboarded) &&
+          <Router>
+            <div className="route-wrapper">
+              <Nav page={this.state.currentPage} />
+              <Route exact path="/" component={Overview} />
+              <Route path="/add-spend" component={AddSpend} />
+            </div>
+          </Router>
+        }
+
+      </div>
     );
   }
 }

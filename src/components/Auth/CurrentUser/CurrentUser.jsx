@@ -1,5 +1,8 @@
 import React from "react";
+import {connect} from "react-redux";
 import PropTypes from "prop-types";
+
+// styles
 import "./CurrentUser.css";
 
 const CurrentUser = ({ user }) => {
@@ -9,13 +12,7 @@ const CurrentUser = ({ user }) => {
         <h1 className="App-header--title">Spenditure</h1>
       </div>
       <div className="currentuser__wrap">
-        <img
-          className="currentuser__photo"
-          src={user.photoURL}
-          alt={user.displayName}
-        />
-
-        {user.displayName}, {user.email}, {user.uid}
+        Welcome back {user.firstname}
 
         <button
           className="currentuser__signout"
@@ -27,13 +24,18 @@ const CurrentUser = ({ user }) => {
   );
 };
 
-CurrentUser.propTypes = {
-  user: PropTypes.shape({
-    displayName: PropTypes.string,
-    email: PropTypes.string.isRequired,
-    photoURL: PropTypes.string,
-    uid: PropTypes.string.isRequired
-  })
+CurrentUser.defaultProps = {
+  user: {},
 };
 
-export default CurrentUser;
+CurrentUser.propTypes = {
+  user: PropTypes.shape({
+    firstname: PropTypes.string,
+  }),
+};
+
+const mapStateToProps = state => ({
+  user: state.auth.user,
+});
+
+export default connect(mapStateToProps)(CurrentUser);
