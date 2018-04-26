@@ -8,6 +8,7 @@ import {
   addOnboardingStages,
   joinHousehold
 } from "./action_creators";
+import { createHousehold } from '../Household/action_creators';
 
 import "../../styles/typography.css";
 import "../../styles/errors.css";
@@ -38,18 +39,22 @@ class Onboarding extends Component {
   }
 
   addHousehold() {
-    this.props.addHousehold(this.props.user).then(
-      () => {
-        this.props
-          .addOnboardingStages(this.props.user.uid)
-          .then(res => {}, err => {});
-      },
-      err => this.setState({ errors: { generateHouseholdError: err.message } }),
-    );
+    const userDetails = {
+      id: this.props.user._id,
+    }
+    this.props.createHousehold(userDetails);
+    // this.props.addHousehold(this.props.user).then(
+    //   () => {
+    //     this.props
+    //       .addOnboardingStages(this.props.user.uid)
+    //       .then(res => {}, err => {});
+    //   },
+    //   err => this.setState({ errors: { generateHouseholdError: err.message } }),
+    // );
   }
 
   joinHousehold() {
-    this.props.joinHousehold(this.state.householdUid, this.props.user.uid).then(
+    this.props.joinHousehold(this.state.householdUid, this.props.user._id).then(
       res => console.log(res),
       err => this.setState({ errors: { joinHouseholdError: err.message } }),
     );
@@ -136,16 +141,21 @@ class Onboarding extends Component {
 }
 
 Onboarding.defaultProps = {
-  household: {}
+  household: {},
+  user: {},
 };
 
 Onboarding.propTypes = {
   addHousehold: PropTypes.func.isRequired,
   addOnboardingStages: PropTypes.func.isRequired,
   joinHousehold: PropTypes.func.isRequired,
+  createHousehold: PropTypes.func.isRequired,
   household: PropTypes.shape({
-    uid: PropTypes.string
-  })
+    uid: PropTypes.string,
+  }),
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+  }),
 };
 
 const mapStateToProps = state => ({
@@ -156,5 +166,6 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, {
   addHousehold,
   addOnboardingStages,
-  joinHousehold
+  joinHousehold,
+  createHousehold,
 })(Onboarding);

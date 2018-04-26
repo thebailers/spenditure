@@ -1,3 +1,4 @@
+import axios from 'axios';
 export const RECEIVE_HOUSEHOLD = 'RECEIVE_HOUSEHOLD';
 
 export const getHouseholdById = id => {
@@ -18,3 +19,6 @@ export const fetchHouseholdId = uid => async dispatch => {
   if (householdId) dispatch(receiveHousehold(householdId));
   else dispatch(receiveHousehold(null));
 };
+
+export const createHousehold = userId => dispatch =>
+  axios.post('/api/households', userId);
