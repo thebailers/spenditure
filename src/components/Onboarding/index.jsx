@@ -8,7 +8,7 @@ import {
   addOnboardingStages,
   joinHousehold
 } from "./action_creators";
-import { createHousehold } from '../Household/action_creators';
+import { createHousehold, setHouseholdForUser } from '../Household/action_creators';
 
 import "../../styles/typography.css";
 import "../../styles/errors.css";
@@ -42,7 +42,12 @@ class Onboarding extends Component {
     const userDetails = {
       id: this.props.user._id,
     }
-    this.props.createHousehold(userDetails);
+
+    this.props.createHousehold(userDetails)
+      .then(
+        res => this.props.setHouseholdForUser(this.props.user._id, res.data.id),
+        err => console.err(err),
+      );
     // this.props.addHousehold(this.props.user).then(
     //   () => {
     //     this.props
@@ -146,10 +151,10 @@ Onboarding.defaultProps = {
 };
 
 Onboarding.propTypes = {
-  addHousehold: PropTypes.func.isRequired,
   addOnboardingStages: PropTypes.func.isRequired,
   joinHousehold: PropTypes.func.isRequired,
   createHousehold: PropTypes.func.isRequired,
+  setHouseholdForUser: PropTypes.func.isRequired,
   household: PropTypes.shape({
     uid: PropTypes.string,
   }),
@@ -168,4 +173,5 @@ export default connect(mapStateToProps, {
   addOnboardingStages,
   joinHousehold,
   createHousehold,
+  setHouseholdForUser,
 })(Onboarding);

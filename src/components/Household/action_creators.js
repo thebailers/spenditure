@@ -22,3 +22,6 @@ export const fetchHouseholdId = uid => async dispatch => {
 
 export const createHousehold = userId => dispatch =>
   axios.post('/api/households', userId);
+
+export const setHouseholdForUser = (userId, household) => dispatch =>
+  axios.put(`/auth/users/${userId}`, household);
