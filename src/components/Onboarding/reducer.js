@@ -1,8 +1,8 @@
-import { FETCH_ONBOARD_STATUS } from './action_creators';
+import { FETCH_ONBOARD_STATUS } from './action_creators'
 
 const INITIAL_STATE = {
   onboarded: false,
-};
+}
 
 const onboarding = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -10,10 +10,10 @@ const onboarding = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         onboarded: action.payload,
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default onboarding;
+export default onboarding

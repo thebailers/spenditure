@@ -1,6 +1,6 @@
-import { RECEIVE_HOUSEHOLD } from './action_creators';
+import { RECEIVE_HOUSEHOLD } from './action_creators'
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {}
 
 const household = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -8,10 +8,10 @@ const household = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         uid: action.payload,
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default household;
+export default household

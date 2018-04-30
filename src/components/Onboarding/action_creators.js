@@ -1,146 +1,100 @@
-import uniqid from "uniqid";
-import { db } from "../../firebase";
+import uniqid from 'uniqid'
+import { db } from '../../firebase'
 
 import {
   getUsersHouseholdByUserId,
   getHouseholdById,
-  receiveHousehold
-} from "../Household/action_creators";
+  receiveHousehold,
+} from '../Household/action_creators'
 
-export const FETCH_ONBOARD_STATUS = "FETCH_ONBOARD_STATUS";
-export const REQUEST_ERROR = "REQUEST_ERROR";
+export const FETCH_ONBOARD_STATUS = 'FETCH_ONBOARD_STATUS'
+export const REQUEST_ERROR = 'REQUEST_ERROR'
 
-const requestError = error => ({ type: REQUEST_ERROR, payload: error });
+const requestError = error => ({ type: REQUEST_ERROR, payload: error })
 
 const receiveOnboardedStatus = onboarded => ({
   type: FETCH_ONBOARD_STATUS,
-  payload: onboarded
-});
+  payload: onboarded,
+})
 
 export const fetchOnboardedStatus = userId => dispatch =>
   db
-    .collection("users")
+    .collection('users')
     .doc(userId)
     .get()
     .then(
-      res => dispatch(receiveOnboardedStatus(res.get("onboarded"))),
-      err => dispatch(requestError(err))
-    );
+      res => dispatch(receiveOnboardedStatus(res.get('onboarded'))),
+      err => dispatch(requestError(err)),
+    )
 
 const setHousehold = (uid, householdId) =>
   new Promise((resolve, reject) => {
-    // db
-    //   .collection("households")
-    //   .doc(householdId)
-    //   .set(
-    //     {
-    //       users: [uid]
-    //     },
-    //     { merge: true }
-    //   )
-    //   .then(() => {
-    //     resolve();
-    //   })
-    //   .catch(() => reject());
-
-    const householdRef = db.collection('households').doc(householdId);
-
-    const newUid = '1234'; // whatever the uid is...
-
-    return db.runTransaction((t) => {
-      return t.get(householdRef).then((doc) => {
-        // doc doesn't exist; can't update
-        if (!doc.exists) return reject();
-        // update the users array after getting it from Firestore.
-        const newUserArray = doc.get('users').push(newUid);
-        resolve(t.set(householdRef, { users: newUserArray }, { merge: true }));
-      });
-    }).catch(console.log);
-
-  });
+    // save the householdId to the users collection
+    console.log(`uid: ${uid}`)
+    console.log(`householdId: ${householdId}`)
+    resolve()
+  })
 
 const setUser = (uid, householdId) => dispatch =>
   new Promise((resolve, reject) => {
     db
-      .collection("users")
+      .collection('users')
       .doc(uid)
       .update({
-        household: householdId
+        household: householdId,
       })
-      .then(
-        () => resolve(dispatch(receiveHousehold(householdId))),
-        err => console.error(err)
-      );
-  });
+      .then(() => resolve(dispatch(receiveHousehold(householdId))), err => console.error(err))
+  })
 
-const createHousehold = user => dispatch => {
-  const { uid } = user;
-  const householdId = uniqid.time();
+const createHousehold = user => (dispatch) => {
+  const { uid } = user
+  const householdId = uniqid.time()
 
-  return Promise.all([
-    setHousehold(uid, householdId),
-    setUser(uid, householdId)(dispatch)
-  ]);
-};
+  return Promise.all([setHousehold(uid, householdId), setUser(uid, householdId)(dispatch)])
+}
 
 export const addHousehold = user => dispatch =>
   new Promise(async (resolve, reject) => {
-    const hasHousehold = await getUsersHouseholdByUserId(user.uid);
+    const hasHousehold = await getUsersHouseholdByUserId(user.uid)
     if (hasHousehold) {
-      return reject(
-        new Error(
-          "You have already generated a household. Please complete the setup steps."
-        )
-      );
+      return reject(new Error('You have already generated a household. Please complete the setup steps.'))
     }
-    return resolve(dispatch(createHousehold(user)));
-  });
+    return resolve(dispatch(createHousehold(user)))
+  })
 
 export const joinHousehold = (household, userId) => dispatch =>
   new Promise(async (resolve, reject) => {
-    console.log(`household: ${household}`);
-    console.log(`userId: ${userId}`);
-
-    const householdExists = await getHouseholdById(household);
-    console.log(householdExists);
+    const householdExists = await getHouseholdById(household)
+    console.log(householdExists)
 
     // Reject if no household id is supplied
-    if (!household) reject(new Error("Please supply a household code"));
+    if (!household) reject(new Error('Please supply a household code'))
 
     if (householdExists) {
       console.log('household exists')
       // implement promise all, to dispatch save user to households and save household to user/household
-      //saveUserToHousehold(household, userId);
-      //resolve();
+      // saveUserToHousehold(household, userId);
+      // resolve();
 
-      return Promise.all([
-        setHousehold(userId, household),
-        setUser(userId, household)(dispatch)
-      ]);
-    } else {
-      return reject(
-          new Error(
-              "Sorry, no household exists with this id, or you do not have access to this household."
-          )
-      );
+      return Promise.all([setHousehold(userId, household), setUser(userId, household)(dispatch)])
     }
-
-  });
+    return reject(new Error('Sorry, no household exists with this id, or you do not have access to this household.'))
+  })
 
 const saveUserToHousehold = (household, userId) =>
   new Promise((resolve, reject) => {
     db.ref(`spenditure/households/${household}/users`).update({
-      users: [...userId]
-    });
-  });
+      users: [...userId],
+    })
+  })
 
 export const addOnboardingStages = userid => dispatch =>
   new Promise((resolve, reject) => {
     db.ref(`spenditure/users/${userid}/onboardedStages`).update(
       {
         stage1: true,
-        stage2: false
+        stage2: false,
       },
-      () => resolve()
-    );
-  });
+      () => resolve(),
+    )
+  })

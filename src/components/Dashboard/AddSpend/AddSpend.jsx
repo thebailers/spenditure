@@ -1,15 +1,15 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import "../../../styles/forms.css";
+import '../../../styles/forms.css'
 
 class AddSpend extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
-      name: "well hello",
-      value: "34.35"
-    };
+      name: 'well hello',
+      value: '34.35',
+    }
   }
   render() {
     return (
@@ -19,7 +19,7 @@ class AddSpend extends Component {
         <form onSubmit={this.handleSubmit}>
           {/* Spend Name: */}
           <div className="form-group">
-            <label for="name">Spend name</label>
+            <label htmlFor="name">Spend name</label>
             <input
               type="text"
               value={this.state.name}
@@ -31,7 +31,7 @@ class AddSpend extends Component {
 
           {/* Spend Value: */}
           <div className="form-group">
-            <label for="value">Spend value</label>
+            <label htmlFor="value">Spend value</label>
             <input
               type="number"
               value={this.state.value}
@@ -52,17 +52,15 @@ class AddSpend extends Component {
 
             <h3>If custom split show this</h3>
             <p>
-              Inputs for each user. When 2nd to last input is added, the
-              remaining is prefilled with remaining value
+              Inputs for each user. When 2nd to last input is added, the remaining is prefilled with
+              remaining value
             </p>
-            <p>
-              Is validated against the value to make sure it is the right amount
-            </p>
+            <p>Is validated against the value to make sure it is the right amount</p>
           </div>
         </form>
       </div>
-    );
+    )
   }
 }
 
-export default AddSpend;
+export default AddSpend

@@ -1,17 +1,17 @@
 const addSpend = (state = [], action) => {
   switch (action.type) {
-    case "ADD_SPEND":
+    case 'ADD_SPEND':
       return [
         ...state,
         {
           id: action.id,
           value: action.value,
-          name: action.name
-        }
-      ];
+          name: action.name,
+        },
+      ]
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default addSpend;
+export default addSpend

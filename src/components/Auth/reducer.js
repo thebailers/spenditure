@@ -1,8 +1,8 @@
-import { SET_CURRENT_USER } from './action_creators';
+import { SET_CURRENT_USER } from './action_creators'
 
 const INITIAL_STATE = {
   user: {},
-};
+}
 
 const auth = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -10,10 +10,10 @@ const auth = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         user: action.user,
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default auth;
+export default auth

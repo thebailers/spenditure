@@ -1,26 +1,24 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import * as _ from 'ramda';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import * as _ from 'ramda'
+import PropTypes from 'prop-types'
 
 // components
-import SignIn from './Auth/SignIn/SignIn';
-import Dashboard from './Dashboard/Dashboard';
+import SignIn from './Auth/SignIn/SignIn'
+import Dashboard from './Dashboard/Dashboard'
 
 // actions
-import { fetchHouseholdId } from './Household/action_creators';
-import { fetchOnboardedStatus } from './Onboarding/action_creators';
-import AddSpend from './Dashboard/AddSpend/AddSpend';
-import Overview from './Dashboard/Overview/Overview';
+import { fetchHouseholdId } from './Household/action_creators'
+import { fetchOnboardedStatus } from './Onboarding/action_creators'
 
 class Root extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       isLoading: true,
-    };
+    }
   }
 
   componentDidMount() {
@@ -28,51 +26,46 @@ class Root extends Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { user } = this.props
 
     return (
       <Router>
         <div className="route-wrapper">
-          <Route exact path="/" render={() => (
-            _.isEmpty(user) ? (
-              <SignIn />
-            ) : (
-              <Redirect to="/dashboard" />
-            ))}
+          <Route
+            exact
+            path="/"
+            render={() => (_.isEmpty(user) ? <SignIn /> : <Redirect to="/dashboard" />)}
           />
-          <Route path="/dashboard" user={user} render={() => (
-              _.isEmpty(user) ? (
-                  <Redirect to="/" />
-              ) : (
-                  <Dashboard />
-              ))}
+          <Route
+            path="/dashboard"
+            user={user}
+            render={() =>
+              (_.isEmpty(user) ? <Redirect to="/" /> : <Dashboard isLoading={this.state.isLoading} />)
+            }
           />
         </div>
       </Router>
-    );
+    )
   }
 }
 
 Root.defaultProps = {
   user: {},
-};
+}
 
 Root.propTypes = {
   user: PropTypes.shape({
     firstname: PropTypes.string,
     lastname: PropTypes.string,
   }),
-  onboarded: PropTypes.bool.isRequired,
-  fetchOnboardedStatus: PropTypes.func.isRequired,
-  fetchHouseholdId: PropTypes.func.isRequired,
-};
+}
 
 const mapStateToProps = state => ({
   user: state.auth.user,
   onboarded: state.onboarding.onboarded,
-});
+})
 
 export default connect(mapStateToProps, {
   fetchOnboardedStatus,
   fetchHouseholdId,
-})(Root);
+})(Root)

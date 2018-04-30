@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import classnames from 'classnames'
 
-import './Nav.css';
+import './Nav.css'
 
 const Nav = ({ page }) => (
   <nav className="nav">
@@ -16,12 +16,12 @@ const Nav = ({ page }) => (
       </li>
     </ul>
   </nav>
-);
+)
 
-const { string } = PropTypes;
+const { string } = PropTypes
 
 Nav.propTypes = {
   page: string.isRequired,
-};
+}
 
-export default Nav;
+export default Nav
