@@ -1,5 +1,4 @@
 import uniqid from 'uniqid'
-import { db } from '../../firebase'
 
 import {
   getUsersHouseholdByUserId,
@@ -17,15 +16,7 @@ const receiveOnboardedStatus = onboarded => ({
   payload: onboarded,
 })
 
-export const fetchOnboardedStatus = userId => dispatch =>
-  db
-    .collection('users')
-    .doc(userId)
-    .get()
-    .then(
-      res => dispatch(receiveOnboardedStatus(res.get('onboarded'))),
-      err => dispatch(requestError(err)),
-    )
+export const fetchOnboardedStatus = userId => dispatch => console.log(userId)
 
 const setHousehold = (uid, householdId) =>
   new Promise((resolve, reject) => {
@@ -37,13 +28,7 @@ const setHousehold = (uid, householdId) =>
 
 const setUser = (uid, householdId) => dispatch =>
   new Promise((resolve, reject) => {
-    db
-      .collection('users')
-      .doc(uid)
-      .update({
-        household: householdId,
-      })
-      .then(() => resolve(dispatch(receiveHousehold(householdId))), err => console.error(err))
+    reject(new Error('nowt setup in setUser in Onboarding action creator'))
   })
 
 const createHousehold = user => (dispatch) => {
@@ -82,19 +67,7 @@ export const joinHousehold = (household, userId) => dispatch =>
   })
 
 const saveUserToHousehold = (household, userId) =>
-  new Promise((resolve, reject) => {
-    db.ref(`spenditure/households/${household}/users`).update({
-      users: [...userId],
-    })
-  })
+  new Promise((resolve, reject) => reject(new Error('Save user to household not set up')))
 
 export const addOnboardingStages = userid => dispatch =>
-  new Promise((resolve, reject) => {
-    db.ref(`spenditure/users/${userid}/onboardedStages`).update(
-      {
-        stage1: true,
-        stage2: false,
-      },
-      () => resolve(),
-    )
-  })
+  new Promise((resolve, reject) => reject(new Error('add onboarding stages not set up')))
