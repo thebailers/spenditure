@@ -39,12 +39,12 @@ class Onboarding extends Component {
       id: this.props.user._id,
     }
 
-    this.props
-      .createHousehold(userDetails)
-      .then(
-        res => this.props.setHouseholdForUser(this.props.user._id, res.data.id),
-        err => console.error(err),
-      )
+    this.props.createHousehold(userDetails.id)
+    // .then(
+    //   res => this.props.setHouseholdForUser(this.props.user._id, res.data.id),
+    //   err => console.error(err),
+    // )
+
     // this.props.addHousehold(this.props.user).then(
     //   () => {
     //     this.props
